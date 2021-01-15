@@ -1,7 +1,11 @@
 //////////////////////////////////////////////////////////////////////
 ///This program adds 3 kV setup beams and 1 CBCT setup beam to the current plan
 ///
-///--version 0.0
+///--version 1.0.0.2
+///Becket Hui 2021/1
+///  Add exception for plan that is approved/reviewed
+///
+///--version 1.0.0.1
 ///Becket Hui 2020/12
 //////////////////////////////////////////////////////////////////////
 using System;
@@ -18,8 +22,8 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.2")]
+[assembly: AssemblyFileVersion("1.0.0.2")]
 [assembly: AssemblyInformationalVersion("1.0")]
 
 // TODO: Uncomment the following line if the script requires write access.
@@ -57,6 +61,10 @@ namespace VMS.TPS
             // If there's no selected plan, throw an exception
             if (currPln == null)
                 throw new ApplicationException("Please select a plan before using this script.");
+
+            // Check if plan is approved
+            if (currPln.ApprovalStatus != PlanSetupApprovalStatus.UnApproved)
+                throw new ApplicationException("Please unapprove plan before using this script.");
 
             // Get first beam
             Beam currBm = currPln.Beams.FirstOrDefault();
