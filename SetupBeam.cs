@@ -4,8 +4,12 @@
 ///     SetupBeam(Beam) - initialze function, creates BeamMachineParameters
 ///     AddBeam(PlanSetup, GantryAngle, PtOrientation, DRRParameters, BmNum) - add a setup beam to the plan based on gantry angle
 ///     CheckBeamDir(GantryAngle, PtOrientation) - Find beam orietation based on beam angle and patient orientation
-///     
-///--version 0.0
+///
+///--version 1.0.0.3
+///Becket Hui 2021/1
+///  Add 179.9 kV beam
+/// 
+///--version 1.0.0.0
 ///Becket Hui 2020/12
 //////////////////////////////////////////////////////////////////////
 using System;
@@ -69,6 +73,8 @@ namespace addSetupBeams
                     if (ptOrient == "HFS" || ptOrient == "FFP") return "right"; else return "left";
                 case 90.0:
                     if (ptOrient == "HFS" || ptOrient == "FFP") return "left"; else return "right";
+                case 180.0:
+                    if (ptOrient == "HFS" || ptOrient == "FFS") return "posterior"; else return "anterior";
                 default:
                     return "unknown";
             }

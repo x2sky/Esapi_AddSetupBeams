@@ -1,6 +1,10 @@
 //////////////////////////////////////////////////////////////////////
-///This program adds 3 kV setup beams and 1 CBCT setup beam to the current plan
+///This program adds 4 kV setup beams and 1 CBCT setup beam to the current plan
 ///
+///--version 1.0.0.3
+///Becket Hui 2021/1
+///  Add 180 kV beam
+///  
 ///--version 1.0.0.2
 ///Becket Hui 2021/1
 ///  Add exception for plan that is approved/reviewed
@@ -22,8 +26,8 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-[assembly: AssemblyVersion("1.0.0.2")]
-[assembly: AssemblyFileVersion("1.0.0.2")]
+[assembly: AssemblyVersion("1.0.0.3")]
+[assembly: AssemblyFileVersion("1.0.0.3")]
 [assembly: AssemblyInformationalVersion("1.0")]
 
 // TODO: Uncomment the following line if the script requires write access.
@@ -134,6 +138,7 @@ namespace VMS.TPS
             setupBm.AddBeam(currPln, 0.0, ptOrient, drrParam, bmIdNo);
             setupBm.AddBeam(currPln, 270.0, ptOrient, drrParam, bmIdNo);
             setupBm.AddBeam(currPln, 90.0, ptOrient, drrParam, bmIdNo);
+            setupBm.AddBeam(currPln, 180.0, ptOrient, drrParam, bmIdNo);
 
             MessageBox.Show("Set of setup beam has been created in plan " + currPln.Id + ".");
         }
