@@ -1,6 +1,10 @@
 //////////////////////////////////////////////////////////////////////
 ///This program adds 4 kV setup beams and 1 CBCT setup beam to the current plan
 ///
+///--version 1.0.0.4
+///Becket Hui 2021/7
+///  Fix bug on DRR setting in which clipping (cm) should be in mm in script 
+/// 
 ///--version 1.0.0.3
 ///Becket Hui 2021/1
 ///  Add 180 kV beam
@@ -26,8 +30,8 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-[assembly: AssemblyVersion("1.0.0.3")]
-[assembly: AssemblyFileVersion("1.0.0.3")]
+[assembly: AssemblyVersion("1.0.0.4")]
+[assembly: AssemblyFileVersion("1.0.0.4")]
 [assembly: AssemblyInformationalVersion("1.0")]
 
 // TODO: Uncomment the following line if the script requires write access.
@@ -103,14 +107,14 @@ namespace VMS.TPS
             DRRCalculationParameters drrParam = new DRRCalculationParameters(500);  // 50 cm DRR size
             if (currPln.Id.ToUpper().Contains("BREAST"))  // breast plan uses chest DRR setting
             {
-                drrParam.SetLayerParameters(0, 0.6, -990.0, 0.0, 1.0, 5.0);
-                drrParam.SetLayerParameters(1, 0.1, -450.0, 0.0, -4.0, 8.0);
+                drrParam.SetLayerParameters(0, 0.6, -990.0, 0.0, 10.0, 50.0);
+                drrParam.SetLayerParameters(1, 0.1, -450.0, 0.0, -40.0, 80.0);
                 drrParam.SetLayerParameters(2, 1.0, 100.0, 1000.0);
             }
             else  // all other plan uses the default DRR setting
             {
-                drrParam.SetLayerParameters(0, 2.0, 0.0, 130.0, -100.0, 100.0);
-                drrParam.SetLayerParameters(1, 10.0, 100.0, 1000.0, -100.0, 100.0);
+                drrParam.SetLayerParameters(0, 2.0, 0.0, 130.0, -1000.0, 1000.0);
+                drrParam.SetLayerParameters(1, 10.0, 100.0, 1000.0, -1000.0, 1000.0);
             }
 
             // Determine beam number based on the largest number currently in the setup beam ID under the current patient
