@@ -1,6 +1,11 @@
 //////////////////////////////////////////////////////////////////////
 ///This program adds 4 kV setup beams and 1 CBCT setup beam to the current plan
 ///
+///--version 1.0.0.5
+///Becket Hui 2021/10
+///   Add CAVITY and LUMPECTOMY to the breast plan ID list
+///   Add or replace DRR settings on the treatment beam also (to default or chest settings)
+///  
 ///--version 1.0.0.4
 ///Becket Hui 2021/7
 ///  Fix bug on DRR setting in which clipping (cm) should be in mm in script 
@@ -30,8 +35,8 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-[assembly: AssemblyVersion("1.0.0.4")]
-[assembly: AssemblyFileVersion("1.0.0.4")]
+[assembly: AssemblyVersion("1.0.0.5")]
+[assembly: AssemblyFileVersion("1.0.0.5")]
 [assembly: AssemblyInformationalVersion("1.0")]
 
 // TODO: Uncomment the following line if the script requires write access.
@@ -104,8 +109,9 @@ namespace VMS.TPS
                 throw new ApplicationException("Cannot determine beam orientation relative to patient orientation, no setup beam created.");
 
             // Create DRR parameters
+            Regex brstMatch = new Regex("BREAST|CAVITY|LUMPECTOMY");  // potential plan ID for breast plans
             DRRCalculationParameters drrParam = new DRRCalculationParameters(500);  // 50 cm DRR size
-            if (currPln.Id.ToUpper().Contains("BREAST"))  // breast plan uses chest DRR setting
+            if (brstMatch.IsMatch(currPln.Id.ToUpper()))  // breast plan uses chest DRR setting
             {
                 drrParam.SetLayerParameters(0, 0.6, -990.0, 0.0, 10.0, 50.0);
                 drrParam.SetLayerParameters(1, 0.1, -450.0, 0.0, -40.0, 80.0);
@@ -135,8 +141,13 @@ namespace VMS.TPS
             }
             bmIdNo = bmIdNo + 1;
 
-            // Create setup beam
             currPt.BeginModifications();
+            // Change or add DRR to existing beam
+            foreach (Beam bm in currPln.Beams)
+            {
+                bm.CreateOrReplaceDRR(drrParam);
+            }
+            // Create setup beam
             SetupBeam setupBm = new SetupBeam(currBm);
             setupBm.AddBeam(currPln, Double.NaN, ptOrient, drrParam, bmIdNo);  // CBCT
             setupBm.AddBeam(currPln, 0.0, ptOrient, drrParam, bmIdNo);
